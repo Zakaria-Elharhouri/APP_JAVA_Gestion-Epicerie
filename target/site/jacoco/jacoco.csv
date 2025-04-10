@@ -1,0 +1,28 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Gestion-epicerie,com.epicerie.model,Vente,0,105,0,2,0,34,0,14,0,13
+Gestion-epicerie,com.epicerie.model,Produit,0,51,0,0,0,21,0,10,0,10
+Gestion-epicerie,com.epicerie.model,LigneVente,0,65,0,0,0,23,0,11,0,11
+Gestion-epicerie,com.mycompany.gestion.epicerie,GestionEpicerie,7,0,0,0,3,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new DefaultTableModel() {...},10,0,0,0,2,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new KeyAdapter() {...},24,0,2,0,6,0,3,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel,561,0,10,0,100,0,13,0,8,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new DefaultTableModel() {...},10,0,0,0,2,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new ActionListener() {...},21,0,0,0,5,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new ActionListener() {...},159,0,12,0,34,0,8,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new ActionListener() {...},138,0,8,0,21,0,6,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new ActionListener() {...},64,0,4,0,13,0,4,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new ActionListener() {...},56,0,6,0,11,0,5,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new ActionListener() {...},128,0,10,0,29,0,7,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new ActionListener() {...},13,0,0,0,3,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel.new MouseAdapter() {...},39,0,2,0,5,0,4,0,3,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new DefaultTableModel() {...},10,0,0,0,2,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new KeyAdapter() {...},24,0,2,0,6,0,3,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new ActionListener() {...},11,0,0,0,3,0,2,0,2,0
+Gestion-epicerie,com.epicerie.ui,ProduitPanel.new ActionListener() {...},58,0,2,0,11,0,3,0,2,0
+Gestion-epicerie,com.epicerie.ui,VentePanel,838,0,14,0,134,0,16,0,9,0
+Gestion-epicerie,com.epicerie.ui,MainFrame,107,0,0,0,33,0,5,0,5,0
+Gestion-epicerie,com.epicerie.util,FactureGenerator,306,0,10,0,66,0,8,0,3,0
+Gestion-epicerie,com.epicerie.util,DBConnection,21,19,1,5,6,10,1,6,0,4
+Gestion-epicerie,com.epicerie.dao,VenteDAO,3,186,8,10,2,53,8,6,0,5
+Gestion-epicerie,com.epicerie.dao,ProduitDAO,4,273,9,13,2,81,9,9,0,7
+Gestion-epicerie,com.epicerie.dao,LigneVenteDAO,3,186,7,9,1,54,7,6,0,5

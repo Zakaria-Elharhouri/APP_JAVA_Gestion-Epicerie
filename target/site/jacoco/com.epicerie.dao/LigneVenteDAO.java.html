@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LigneVenteDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gestion-epicerie</a> &gt; <a href="index.source.html" class="el_package">com.epicerie.dao</a> &gt; <span class="el_source">LigneVenteDAO.java</span></div><h1>LigneVenteDAO.java</h1><pre class="source lang-java linenums">package com.epicerie.dao;
+
+import com.epicerie.model.LigneVente;
+import com.epicerie.model.Produit;
+import com.epicerie.model.Vente;
+import com.epicerie.util.DBConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="fc" id="L12">public class LigneVenteDAO {</span>
+    
+<span class="fc" id="L14">    public ProduitDAO produitDAO = new ProduitDAO();</span>
+    
+    public boolean ajouter(LigneVente ligneVente, int idVente) {
+<span class="fc" id="L17">        String query = &quot;INSERT INTO LIGNEVENTE (id_produit, id_vente, quantite) VALUES (?, ?, ?)&quot;;</span>
+        
+<span class="fc" id="L19">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L20">             PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {</span>
+            
+<span class="fc" id="L22">            pstmt.setInt(1, ligneVente.getProduit().getId());</span>
+<span class="fc" id="L23">            pstmt.setInt(2, idVente);</span>
+<span class="fc" id="L24">            pstmt.setInt(3, ligneVente.getQuantite());</span>
+            
+<span class="fc" id="L26">            int rowsAffected = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">            if (rowsAffected &gt; 0) {</span>
+<span class="fc" id="L28">                ResultSet rs = pstmt.getGeneratedKeys();</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">                if (rs.next()) {</span>
+<span class="fc" id="L30">                    ligneVente.setId(rs.getInt(1));</span>
+                }
+<span class="fc" id="L32">                return true;</span>
+            }
+<span class="pc bpc" id="L34" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="fc" id="L35">            System.err.println(&quot;Erreur lors de l'ajout d'une ligne de vente: &quot; + e.getMessage());</span>
+<span class="nc" id="L36">        }</span>
+        
+<span class="fc" id="L38">        return false;</span>
+    }
+    
+    public List&lt;LigneVente&gt; trouverParVente(int idVente) {
+<span class="fc" id="L42">        List&lt;LigneVente&gt; lignesVente = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L43">        String query = &quot;SELECT * FROM LIGNEVENTE WHERE id_vente = ?&quot;;</span>
+        
+<span class="fc" id="L45">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L46">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L48">            pstmt.setInt(1, idVente);</span>
+<span class="fc" id="L49">            ResultSet rs = pstmt.executeQuery();</span>
+            
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L52">                int idProduit = rs.getInt(&quot;id_produit&quot;);</span>
+<span class="fc" id="L53">                Produit produit = produitDAO.trouverParId(idProduit);</span>
+                
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">                if (produit != null) {</span>
+<span class="fc" id="L56">                    LigneVente ligneVente = new LigneVente(</span>
+<span class="fc" id="L57">                        rs.getInt(&quot;id_ligne&quot;),</span>
+                        produit,
+<span class="fc" id="L59">                        rs.getInt(&quot;quantite&quot;)</span>
+                    );
+<span class="fc" id="L61">                    lignesVente.add(ligneVente);</span>
+                }
+<span class="fc" id="L63">            }</span>
+<span class="fc" id="L64">        } catch (SQLException e) {</span>
+<span class="fc" id="L65">            System.err.println(&quot;Erreur lors de la récupération des lignes de vente: &quot; + e.getMessage());</span>
+<span class="fc" id="L66">        }</span>
+        
+<span class="fc" id="L68">        return lignesVente;</span>
+    }
+    
+    public boolean supprimer(int id) {
+<span class="fc" id="L72">        String query = &quot;DELETE FROM LIGNEVENTE WHERE id_ligne = ?&quot;;</span>
+        
+<span class="fc" id="L74">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L75">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L77">            pstmt.setInt(1, id);</span>
+            
+<span class="fc" id="L79">            int rowsAffected = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            return rowsAffected &gt; 0;</span>
+<span class="fc" id="L81">        } catch (SQLException e) {</span>
+<span class="fc" id="L82">            System.err.println(&quot;Erreur lors de la suppression d'une ligne de vente: &quot; + e.getMessage());</span>
+        }
+        
+<span class="fc" id="L85">        return false;</span>
+    }
+    
+    public boolean supprimerParVente(int idVente) {
+<span class="fc" id="L89">        String query = &quot;DELETE FROM LIGNEVENTE WHERE id_vente = ?&quot;;</span>
+        
+<span class="fc" id="L91">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L92">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L94">            pstmt.setInt(1, idVente);</span>
+            
+<span class="fc" id="L96">            int rowsAffected = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            return rowsAffected &gt; 0;</span>
+<span class="fc" id="L98">        } catch (SQLException e) {</span>
+<span class="fc" id="L99">            System.err.println(&quot;Erreur lors de la suppression des lignes de vente: &quot; + e.getMessage());</span>
+        }
+        
+<span class="fc" id="L102">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

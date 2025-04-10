@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProduitPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gestion-epicerie</a> &gt; <a href="index.source.html" class="el_package">com.epicerie.ui</a> &gt; <span class="el_source">ProduitPanel.java</span></div><h1>ProduitPanel.java</h1><pre class="source lang-java linenums">package com.epicerie.ui;
+
+import com.epicerie.dao.ProduitDAO;
+import com.epicerie.model.Produit;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+public class ProduitPanel extends JPanel {
+    
+    public JTextField txtRecherche;
+    public JTable tableProduits;
+    private DefaultTableModel tableModel;
+    public JButton btnAjouter;
+    public JButton btnModifier;
+    public JButton btnSupprimer;
+    
+    public ProduitDAO produitDAO;
+    
+<span class="nc" id="L26">    public ProduitPanel() {</span>
+<span class="nc" id="L27">        produitDAO = new ProduitDAO();</span>
+<span class="nc" id="L28">        initComponents();</span>
+<span class="nc" id="L29">        configureUI();</span>
+<span class="nc" id="L30">        loadProduits();</span>
+<span class="nc" id="L31">        applyStyles();</span>
+<span class="nc" id="L32">    }</span>
+    
+    private void initComponents() {
+<span class="nc" id="L35">        setLayout(new BorderLayout(10, 10));</span>
+<span class="nc" id="L36">        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</span>
+        
+        // Panel de recherche
+<span class="nc" id="L39">        JPanel searchPanel = new JPanel(new BorderLayout(5, 0));</span>
+<span class="nc" id="L40">        searchPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));</span>
+        
+<span class="nc" id="L42">        JLabel lblRecherche = new JLabel(&quot;Rechercher un produit:&quot;);</span>
+<span class="nc" id="L43">        txtRecherche = new JTextField(20);</span>
+        
+<span class="nc" id="L45">        searchPanel.add(lblRecherche, BorderLayout.WEST);</span>
+<span class="nc" id="L46">        searchPanel.add(txtRecherche, BorderLayout.CENTER);</span>
+        
+        // Table des produits
+<span class="nc" id="L49">        String[] columnNames = {&quot;ID&quot;, &quot;Nom&quot;, &quot;Prix (DH)&quot;};</span>
+<span class="nc" id="L50">        tableModel = new DefaultTableModel(columnNames, 0) {</span>
+            @Override
+            public boolean isCellEditable(int row, int column) {
+<span class="nc" id="L53">                return false;</span>
+            }
+        };
+        
+<span class="nc" id="L57">        tableProduits = new JTable(tableModel);</span>
+<span class="nc" id="L58">        tableProduits.getColumnModel().getColumn(0).setMaxWidth(50);</span>
+<span class="nc" id="L59">        tableProduits.getColumnModel().getColumn(2).setMaxWidth(100);</span>
+<span class="nc" id="L60">        tableProduits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);</span>
+        
+<span class="nc" id="L62">        JScrollPane scrollPane = new JScrollPane(tableProduits);</span>
+        
+        // Panel de boutons
+<span class="nc" id="L65">        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+        
+<span class="nc" id="L67">        btnAjouter = new JButton(&quot;Ajouter&quot;);</span>
+<span class="nc" id="L68">        btnModifier = new JButton(&quot;Modifier&quot;);</span>
+<span class="nc" id="L69">        btnSupprimer = new JButton(&quot;Supprimer&quot;);</span>
+        
+<span class="nc" id="L71">        buttonPanel.add(btnAjouter);</span>
+<span class="nc" id="L72">        buttonPanel.add(btnModifier);</span>
+<span class="nc" id="L73">        buttonPanel.add(btnSupprimer);</span>
+        
+        // Ajouter les composants au panel principal
+<span class="nc" id="L76">        add(searchPanel, BorderLayout.NORTH);</span>
+<span class="nc" id="L77">        add(scrollPane, BorderLayout.CENTER);</span>
+<span class="nc" id="L78">        add(buttonPanel, BorderLayout.SOUTH);</span>
+<span class="nc" id="L79">    }</span>
+    
+    private void configureUI() {
+        // Configuration des événements
+<span class="nc" id="L83">        txtRecherche.addKeyListener(new KeyAdapter() {</span>
+            @Override
+            public void keyReleased(KeyEvent e) {
+<span class="nc" id="L86">                String searchTerm = txtRecherche.getText().trim();</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                if (searchTerm.isEmpty()) {</span>
+<span class="nc" id="L88">                    loadProduits();</span>
+                } else {
+<span class="nc" id="L90">                    searchProduits(searchTerm);</span>
+                }
+<span class="nc" id="L92">            }</span>
+        });
+        
+<span class="nc" id="L95">        btnAjouter.addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L98">                showProduitDialog(null);</span>
+<span class="nc" id="L99">            }</span>
+        });
+        
+<span class="nc" id="L102">        btnModifier.addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L105">                int selectedRow = tableProduits.getSelectedRow();</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                if (selectedRow &gt;= 0) {</span>
+<span class="nc" id="L107">                    int id = (int) tableModel.getValueAt(selectedRow, 0);</span>
+<span class="nc" id="L108">                    String nom = (String) tableModel.getValueAt(selectedRow, 1);</span>
+<span class="nc" id="L109">                    double prix = (double) tableModel.getValueAt(selectedRow, 2);</span>
+                    
+<span class="nc" id="L111">                    Produit produit = new Produit(id, nom, prix);</span>
+<span class="nc" id="L112">                    showProduitDialog(produit);</span>
+<span class="nc" id="L113">                } else {</span>
+<span class="nc" id="L114">                    JOptionPane.showMessageDialog(ProduitPanel.this, </span>
+                        &quot;Veuillez sélectionner un produit à modifier.&quot;, 
+                        &quot;Aucune sélection&quot;, JOptionPane.INFORMATION_MESSAGE);
+                }
+<span class="nc" id="L118">            }</span>
+        });
+        
+<span class="nc" id="L121">       btnSupprimer.addActionListener(new ActionListener() {</span>
+    @Override
+    public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L124">        int selectedRow = tableProduits.getSelectedRow();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (selectedRow &gt;= 0) {</span>
+<span class="nc" id="L126">            int id = (int) tableModel.getValueAt(selectedRow, 0); // This line determines the ID</span>
+<span class="nc" id="L127">            String nom = (String) tableModel.getValueAt(selectedRow, 1);</span>
+
+<span class="nc" id="L129">            int confirmation = JOptionPane.showConfirmDialog(ProduitPanel.this, </span>
+                &quot;Êtes-vous sûr de vouloir supprimer le produit \&quot;&quot; + nom + &quot;\&quot; ?&quot;, 
+                &quot;Confirmation de suppression&quot;, JOptionPane.YES_NO_OPTION);
+
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            if (confirmation == JOptionPane.YES_OPTION) {</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                if (produitDAO.supprimer(id)) {</span>
+<span class="nc" id="L135">                    loadProduits();</span>
+<span class="nc" id="L136">                    JOptionPane.showMessageDialog(ProduitPanel.this, </span>
+                        &quot;Produit supprimé avec succès.&quot;, 
+                        &quot;Suppression réussie&quot;, JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        }
+<span class="nc" id="L142">    }</span>
+});
+
+<span class="nc" id="L145">    }</span>
+    
+    public void loadProduits() {
+<span class="nc" id="L148">        List&lt;Produit&gt; produits = produitDAO.trouverTous();</span>
+<span class="nc" id="L149">        updateTable(produits);</span>
+<span class="nc" id="L150">    }</span>
+    
+    public void searchProduits(String searchTerm) {
+<span class="nc" id="L153">        List&lt;Produit&gt; produits = produitDAO.rechercherParNom(searchTerm);</span>
+<span class="nc" id="L154">        updateTable(produits);</span>
+<span class="nc" id="L155">    }</span>
+    
+    private void updateTable(List&lt;Produit&gt; produits) {
+<span class="nc" id="L158">        tableModel.setRowCount(0);</span>
+        
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        for (Produit produit : produits) {</span>
+<span class="nc" id="L161">            Object[] row = {produit.getId(), produit.getNom(), produit.getPrix()};</span>
+<span class="nc" id="L162">            tableModel.addRow(row);</span>
+<span class="nc" id="L163">        }</span>
+<span class="nc" id="L164">    }</span>
+    
+    public void showProduitDialog(Produit produit) {
+        // Configuration du dialog
+<span class="nc" id="L168">        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), </span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">            (produit == null) ? &quot;Ajouter un produit&quot; : &quot;Modifier un produit&quot;, true);</span>
+<span class="nc" id="L170">        dialog.setLayout(new BorderLayout(10, 10));</span>
+<span class="nc" id="L171">        dialog.setSize(350, 200);</span>
+<span class="nc" id="L172">        dialog.setLocationRelativeTo(this);</span>
+        
+        // Panel pour les champs
+<span class="nc" id="L175">        JPanel formPanel = new JPanel(new GridLayout(2, 2, 10, 10));</span>
+<span class="nc" id="L176">        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</span>
+        
+<span class="nc" id="L178">        JLabel lblNom = new JLabel(&quot;Nom du produit:&quot;);</span>
+<span class="nc" id="L179">        JTextField txtNom = new JTextField(20);</span>
+        
+<span class="nc" id="L181">        JLabel lblPrix = new JLabel(&quot;Prix (DH):&quot;);</span>
+<span class="nc" id="L182">        JTextField txtPrix = new JTextField(10);</span>
+        
+<span class="nc" id="L184">        formPanel.add(lblNom);</span>
+<span class="nc" id="L185">        formPanel.add(txtNom);</span>
+<span class="nc" id="L186">        formPanel.add(lblPrix);</span>
+<span class="nc" id="L187">        formPanel.add(txtPrix);</span>
+        
+        // Panel pour les boutons
+<span class="nc" id="L190">        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        JButton btnSave = new JButton((produit == null) ? &quot;Ajouter&quot; : &quot;Modifier&quot;);</span>
+<span class="nc" id="L192">        JButton btnCancel = new JButton(&quot;Annuler&quot;);</span>
+        
+<span class="nc" id="L194">        buttonPanel.add(btnSave);</span>
+<span class="nc" id="L195">        buttonPanel.add(btnCancel);</span>
+        
+        // Si modification, remplir les champs
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (produit != null) {</span>
+<span class="nc" id="L199">            txtNom.setText(produit.getNom());</span>
+<span class="nc" id="L200">            txtPrix.setText(String.valueOf(produit.getPrix()));</span>
+        }
+        
+        // Événements des boutons
+<span class="nc" id="L204">        btnSave.addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L207">                String nom = txtNom.getText().trim();</span>
+<span class="nc" id="L208">                String prixText = txtPrix.getText().trim();</span>
+                
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                if (nom.isEmpty()) {</span>
+<span class="nc" id="L211">                    JOptionPane.showMessageDialog(dialog, </span>
+                        &quot;Le nom du produit est obligatoire.&quot;, 
+                        &quot;Champ obligatoire&quot;, JOptionPane.WARNING_MESSAGE);
+<span class="nc" id="L214">                    return;</span>
+                }
+                
+                double prix;
+                try {
+<span class="nc" id="L219">                    prix = Double.parseDouble(prixText);</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                    if (prix &lt;= 0) {</span>
+<span class="nc" id="L221">                        throw new NumberFormatException();</span>
+                    }
+<span class="nc" id="L223">                } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L224">                    JOptionPane.showMessageDialog(dialog, </span>
+                        &quot;Le prix doit être un nombre positif.&quot;, 
+                        &quot;Format invalide&quot;, JOptionPane.WARNING_MESSAGE);
+<span class="nc" id="L227">                    return;</span>
+<span class="nc" id="L228">                }</span>
+                
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                if (produit == null) {</span>
+                    // Ajout d'un nouveau produit
+<span class="nc" id="L232">                    Produit nouveauProduit = new Produit(nom, prix);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                    if (produitDAO.ajouter(nouveauProduit)) {</span>
+<span class="nc" id="L234">                        loadProduits();</span>
+<span class="nc" id="L235">                        dialog.dispose();</span>
+<span class="nc" id="L236">                        JOptionPane.showMessageDialog(ProduitPanel.this, </span>
+                            &quot;Produit ajouté avec succès.&quot;, 
+                            &quot;Ajout réussi&quot;, JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+<span class="nc" id="L240">                        JOptionPane.showMessageDialog(dialog, </span>
+                            &quot;Erreur lors de l'ajout du produit.&quot;, 
+                            &quot;Erreur d'ajout&quot;, JOptionPane.ERROR_MESSAGE);
+                    }
+<span class="nc" id="L244">                } else {</span>
+                    // Modification d'un produit existant
+<span class="nc" id="L246">                    produit.setNom(nom);</span>
+<span class="nc" id="L247">                    produit.setPrix(prix);</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">                    if (produitDAO.modifier(produit)) {</span>
+<span class="nc" id="L249">                        loadProduits();</span>
+<span class="nc" id="L250">                        dialog.dispose();</span>
+<span class="nc" id="L251">                        JOptionPane.showMessageDialog(ProduitPanel.this, </span>
+                            &quot;Produit modifié avec succès.&quot;, 
+                            &quot;Modification réussie&quot;, JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+<span class="nc" id="L255">                        JOptionPane.showMessageDialog(dialog, </span>
+                            &quot;Erreur lors de la modification du produit.&quot;, 
+                            &quot;Erreur de modification&quot;, JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+<span class="nc" id="L260">            }</span>
+        });
+        
+<span class="nc" id="L263">        btnCancel.addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L266">                dialog.dispose();</span>
+<span class="nc" id="L267">            }</span>
+        });
+        
+        // Ajouter les composants au dialog
+<span class="nc" id="L271">        dialog.add(formPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L272">        dialog.add(buttonPanel, BorderLayout.SOUTH);</span>
+        
+<span class="nc" id="L274">        dialog.setVisible(true);</span>
+<span class="nc" id="L275">    }</span>
+    
+    private void applyStyles() {
+    // Style général
+<span class="nc" id="L279">    setBackground(new Color(240, 240, 240));</span>
+    
+    // Style des boutons
+<span class="nc" id="L282">    Color buttonColor = new Color(0, 120, 215);</span>
+<span class="nc" id="L283">    Font buttonFont = new Font(&quot;Segoe UI&quot;, Font.BOLD, 12);</span>
+    
+<span class="nc bnc" id="L285" title="All 2 branches missed.">    for (JButton button : new JButton[]{btnAjouter, btnModifier, btnSupprimer}) {</span>
+<span class="nc" id="L286">        button.setBackground(buttonColor);</span>
+<span class="nc" id="L287">        button.setForeground(Color.BLACK); // Changé de WHITE à BLACK</span>
+<span class="nc" id="L288">        button.setFont(buttonFont);</span>
+<span class="nc" id="L289">        button.setFocusPainted(false);</span>
+<span class="nc" id="L290">        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));</span>
+    }
+    
+    // Style de la table
+<span class="nc" id="L294">    tableProduits.setFont(new Font(&quot;Segoe UI&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L295">    tableProduits.setRowHeight(25);</span>
+<span class="nc" id="L296">    tableProduits.setShowGrid(true);</span>
+<span class="nc" id="L297">    tableProduits.setGridColor(new Color(220, 220, 220));</span>
+<span class="nc" id="L298">    tableProduits.setSelectionBackground(new Color(200, 230, 255));</span>
+    
+    // Style du champ de recherche
+<span class="nc" id="L301">    txtRecherche.setFont(new Font(&quot;Segoe UI&quot;, Font.PLAIN, 12));</span>
+<span class="nc" id="L302">    txtRecherche.setBorder(BorderFactory.createCompoundBorder(</span>
+<span class="nc" id="L303">        BorderFactory.createLineBorder(new Color(200, 200, 200)),</span>
+<span class="nc" id="L304">        BorderFactory.createEmptyBorder(5, 5, 5, 5)));</span>
+    
+    // Style des labels
+<span class="nc" id="L307">    JLabel lblRecherche = (JLabel)((JPanel)getComponent(0)).getComponent(0);</span>
+<span class="nc" id="L308">    lblRecherche.setFont(new Font(&quot;Segoe UI&quot;, Font.BOLD, 12));</span>
+<span class="nc" id="L309">}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

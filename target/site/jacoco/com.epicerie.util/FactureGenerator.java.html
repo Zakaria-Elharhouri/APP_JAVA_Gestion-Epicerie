@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FactureGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gestion-epicerie</a> &gt; <a href="index.source.html" class="el_package">com.epicerie.util</a> &gt; <span class="el_source">FactureGenerator.java</span></div><h1>FactureGenerator.java</h1><pre class="source lang-java linenums">package com.epicerie.util;
+
+import com.epicerie.model.LigneVente;
+import com.epicerie.model.Vente;
+import java.awt.*;
+import java.awt.print.*;
+import java.text.SimpleDateFormat;
+
+public class FactureGenerator implements Printable {
+    
+    private Vente vente;
+    private Font headerFont, normalFont, boldFont, footerFont;
+    
+<span class="nc" id="L14">    public FactureGenerator(Vente vente) {</span>
+<span class="nc" id="L15">        this.vente = vente;</span>
+<span class="nc" id="L16">        this.headerFont = new Font(&quot;Arial&quot;, Font.BOLD, 18);</span>
+<span class="nc" id="L17">        this.normalFont = new Font(&quot;Arial&quot;, Font.PLAIN, 12);</span>
+<span class="nc" id="L18">        this.boldFont = new Font(&quot;Arial&quot;, Font.BOLD, 12);</span>
+<span class="nc" id="L19">        this.footerFont = new Font(&quot;Arial&quot;, Font.ITALIC, 10);</span>
+<span class="nc" id="L20">    }</span>
+    
+    public void genererEtImprimer() {
+<span class="nc" id="L23">        PrinterJob job = PrinterJob.getPrinterJob();</span>
+<span class="nc" id="L24">        job.setPrintable(this);</span>
+        
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (job.printDialog()) {</span>
+            try {
+<span class="nc" id="L28">                job.print();</span>
+<span class="nc" id="L29">            } catch (PrinterException e) {</span>
+<span class="nc" id="L30">                System.err.println(&quot;Erreur d'impression: &quot; + e.getMessage());</span>
+<span class="nc" id="L31">            }</span>
+        }
+<span class="nc" id="L33">    }</span>
+    
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (pageIndex &gt; 0) return NO_SUCH_PAGE;</span>
+        
+<span class="nc" id="L39">        Graphics2D g2d = (Graphics2D) graphics;</span>
+<span class="nc" id="L40">        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());</span>
+        
+<span class="nc" id="L42">        SimpleDateFormat sdf = new SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;);</span>
+<span class="nc" id="L43">        int y = 30;</span>
+        
+        // En-tête avec fond coloré
+<span class="nc" id="L46">        g2d.setColor(new Color(0, 120, 215));</span>
+<span class="nc" id="L47">        g2d.fillRect(0, 0, (int)pageFormat.getImageableWidth(), 60);</span>
+        
+<span class="nc" id="L49">        g2d.setColor(Color.WHITE);</span>
+<span class="nc" id="L50">        g2d.setFont(headerFont);</span>
+<span class="nc" id="L51">        g2d.drawString(&quot;ÉPICERIE DU QUARTIER&quot;, 50, y);</span>
+<span class="nc" id="L52">        y += 20;</span>
+<span class="nc" id="L53">        g2d.drawString(&quot;FACTURE N°&quot; + vente.getId(), 50, y);</span>
+<span class="nc" id="L54">        y += 30;</span>
+        
+        // Info facture
+<span class="nc" id="L57">        g2d.setColor(Color.BLACK);</span>
+<span class="nc" id="L58">        g2d.setFont(normalFont);</span>
+<span class="nc" id="L59">        g2d.drawString(&quot;Date: &quot; + sdf.format(vente.getDate()), 50, y);</span>
+<span class="nc" id="L60">        y += 20;</span>
+        
+        // Ligne séparatrice
+<span class="nc" id="L63">        g2d.drawLine(50, y, 450, y);</span>
+<span class="nc" id="L64">        y += 20;</span>
+        
+        // Entêtes de colonnes
+<span class="nc" id="L67">        g2d.setFont(boldFont);</span>
+<span class="nc" id="L68">        g2d.drawString(&quot;PRODUIT&quot;, 50, y);</span>
+<span class="nc" id="L69">        g2d.drawString(&quot;QTE&quot;, 250, y);</span>
+<span class="nc" id="L70">        g2d.drawString(&quot;PRIX&quot;, 300, y);</span>
+<span class="nc" id="L71">        g2d.drawString(&quot;TOTAL&quot;, 380, y);</span>
+<span class="nc" id="L72">        y += 5;</span>
+        
+        // Ligne séparatrice
+<span class="nc" id="L75">        g2d.drawLine(50, y, 450, y);</span>
+<span class="nc" id="L76">        y += 15;</span>
+        
+        // Détails des produits
+<span class="nc" id="L79">        g2d.setFont(normalFont);</span>
+<span class="nc" id="L80">        boolean alternate = false;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        for (LigneVente ligne : vente.getLignesVente()) {</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (alternate) {</span>
+<span class="nc" id="L83">                g2d.setColor(new Color(240, 240, 240));</span>
+<span class="nc" id="L84">                g2d.fillRect(50, y-15, 400, 20);</span>
+            }
+<span class="nc" id="L86">            g2d.setColor(Color.BLACK);</span>
+            
+<span class="nc" id="L88">            g2d.drawString(ligne.getProduit().getNom(), 50, y);</span>
+<span class="nc" id="L89">            g2d.drawString(String.valueOf(ligne.getQuantite()), 250, y);</span>
+<span class="nc" id="L90">            g2d.drawString(String.format(&quot;%.2f DH&quot;, ligne.getProduit().getPrix()), 300, y);</span>
+<span class="nc" id="L91">            g2d.drawString(String.format(&quot;%.2f DH&quot;, ligne.getSousTotal()), 380, y);</span>
+            
+<span class="nc" id="L93">            y += 20;</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            alternate = !alternate;</span>
+<span class="nc" id="L95">        }</span>
+        
+        // Ligne séparatrice
+<span class="nc" id="L98">        g2d.drawLine(50, y, 450, y);</span>
+<span class="nc" id="L99">        y += 20;</span>
+        
+        // Total
+<span class="nc" id="L102">        g2d.setFont(boldFont);</span>
+<span class="nc" id="L103">        g2d.drawString(&quot;TOTAL À PAYER: &quot; + String.format(&quot;%.2f DH&quot;, vente.getMontantTotal()), 300, y);</span>
+<span class="nc" id="L104">        y += 40;</span>
+        
+        // Pied de page
+<span class="nc" id="L107">        g2d.setFont(footerFont);</span>
+<span class="nc" id="L108">        g2d.drawString(&quot;Merci de votre visite et à bientôt!&quot;, 50, y);</span>
+<span class="nc" id="L109">        y += 15;</span>
+<span class="nc" id="L110">        g2d.drawString(&quot;Tél: 05 00 00 00 00&quot;, 50, y);</span>
+        
+<span class="nc" id="L112">        return PAGE_EXISTS;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

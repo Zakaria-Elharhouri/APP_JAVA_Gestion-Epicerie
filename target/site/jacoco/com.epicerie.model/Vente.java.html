@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vente.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gestion-epicerie</a> &gt; <a href="index.source.html" class="el_package">com.epicerie.model</a> &gt; <span class="el_source">Vente.java</span></div><h1>Vente.java</h1><pre class="source lang-java linenums">package com.epicerie.model;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class Vente {
+    private int id;
+    private Date date;
+    private double montantTotal;
+    private List&lt;LigneVente&gt; lignesVente;
+    
+<span class="fc" id="L13">    public Vente() {</span>
+<span class="fc" id="L14">        this.date = new Date();</span>
+<span class="fc" id="L15">        this.montantTotal = 0.0;</span>
+<span class="fc" id="L16">        this.lignesVente = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L17">    }</span>
+    
+<span class="fc" id="L19">    public Vente(int id, Date date, double montantTotal) {</span>
+<span class="fc" id="L20">        this.id = id;</span>
+<span class="fc" id="L21">        this.date = date;</span>
+<span class="fc" id="L22">        this.montantTotal = montantTotal;</span>
+<span class="fc" id="L23">        this.lignesVente = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L24">    }</span>
+    
+    public int getId() {
+<span class="fc" id="L27">        return id;</span>
+    }
+    
+    public void setId(int id) {
+<span class="fc" id="L31">        this.id = id;</span>
+<span class="fc" id="L32">    }</span>
+    
+    public Date getDate() {
+<span class="fc" id="L35">        return date;</span>
+    }
+    
+    public void setDate(Date date) {
+<span class="fc" id="L39">        this.date = date;</span>
+<span class="fc" id="L40">    }</span>
+    
+    public double getMontantTotal() {
+<span class="fc" id="L43">        return montantTotal;</span>
+    }
+    
+    public void setMontantTotal(double montantTotal) {
+<span class="fc" id="L47">        this.montantTotal = montantTotal;</span>
+<span class="fc" id="L48">    }</span>
+    
+    public List&lt;LigneVente&gt; getLignesVente() {
+<span class="fc" id="L51">        return lignesVente;</span>
+    }
+    
+    public void setLignesVente(List&lt;LigneVente&gt; lignesVente) {
+<span class="fc" id="L55">        this.lignesVente = lignesVente;</span>
+<span class="fc" id="L56">    }</span>
+    
+    public void ajouterLigneVente(LigneVente ligneVente) {
+<span class="fc" id="L59">        this.lignesVente.add(ligneVente);</span>
+<span class="fc" id="L60">        calculerTotal();</span>
+<span class="fc" id="L61">    }</span>
+    
+    public void retirerLigneVente(LigneVente ligneVente) {
+<span class="fc" id="L64">        this.lignesVente.remove(ligneVente);</span>
+<span class="fc" id="L65">        calculerTotal();</span>
+<span class="fc" id="L66">    }</span>
+    
+    public void calculerTotal() {
+<span class="fc" id="L69">        this.montantTotal = 0.0;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (LigneVente ligne : lignesVente) {</span>
+<span class="fc" id="L71">            this.montantTotal += ligne.getProduit().getPrix() * ligne.getQuantite();</span>
+<span class="fc" id="L72">        }</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

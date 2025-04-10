@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LigneVente.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gestion-epicerie</a> &gt; <a href="index.source.html" class="el_package">com.epicerie.model</a> &gt; <span class="el_source">LigneVente.java</span></div><h1>LigneVente.java</h1><pre class="source lang-java linenums">package com.epicerie.model;
+
+public class LigneVente {
+    private int id;
+    private Produit produit;
+    private int quantite;
+    
+<span class="fc" id="L8">    public LigneVente() {</span>
+<span class="fc" id="L9">        this.quantite = 1;</span>
+<span class="fc" id="L10">    }</span>
+    
+<span class="fc" id="L12">    public LigneVente(Produit produit, int quantite) {</span>
+<span class="fc" id="L13">        this.produit = produit;</span>
+<span class="fc" id="L14">        this.quantite = quantite;</span>
+<span class="fc" id="L15">    }</span>
+    
+<span class="fc" id="L17">    public LigneVente(int id, Produit produit, int quantite) {</span>
+<span class="fc" id="L18">        this.id = id;</span>
+<span class="fc" id="L19">        this.produit = produit;</span>
+<span class="fc" id="L20">        this.quantite = quantite;</span>
+<span class="fc" id="L21">    }</span>
+    
+    public int getId() {
+<span class="fc" id="L24">        return id;</span>
+    }
+    
+    public void setId(int id) {
+<span class="fc" id="L28">        this.id = id;</span>
+<span class="fc" id="L29">    }</span>
+    
+    public Produit getProduit() {
+<span class="fc" id="L32">        return produit;</span>
+    }
+    
+    public void setProduit(Produit produit) {
+<span class="fc" id="L36">        this.produit = produit;</span>
+<span class="fc" id="L37">    }</span>
+    
+    public int getQuantite() {
+<span class="fc" id="L40">        return quantite;</span>
+    }
+    
+    public void setQuantite(int quantite) {
+<span class="fc" id="L44">        this.quantite = quantite;</span>
+<span class="fc" id="L45">    }</span>
+    
+    public double getSousTotal() {
+<span class="fc" id="L48">        return produit.getPrix() * quantite;</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L53">        return produit.getNom() + &quot; x&quot; + quantite + &quot; (&quot; + getSousTotal() + &quot;€)&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

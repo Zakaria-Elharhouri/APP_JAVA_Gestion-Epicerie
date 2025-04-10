@@ -1,0 +1,7 @@
+com\mycompany\DBConnectionTest.class
+com\mycompany\LigneVenteDAOTest.class
+com\mycompany\VenteTest.class
+com\mycompany\ProduitTest.class
+com\mycompany\LigneVenteTest.class
+com\mycompany\ProduitDAOTest.class
+com\mycompany\VenteDAOTest.class

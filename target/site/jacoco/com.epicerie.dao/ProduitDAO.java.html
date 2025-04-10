@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProduitDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gestion-epicerie</a> &gt; <a href="index.source.html" class="el_package">com.epicerie.dao</a> &gt; <span class="el_source">ProduitDAO.java</span></div><h1>ProduitDAO.java</h1><pre class="source lang-java linenums">package com.epicerie.dao;
+
+import com.epicerie.model.Produit;
+import com.epicerie.util.DBConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="fc" id="L10">public class ProduitDAO {</span>
+    
+    public boolean ajouter(Produit produit) {
+<span class="fc" id="L13">        String query = &quot;INSERT INTO PRODUIT (nom, prix) VALUES (?, ?)&quot;;</span>
+<span class="fc" id="L14">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L15">             PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {</span>
+            
+<span class="fc" id="L17">            pstmt.setString(1, produit.getNom());</span>
+<span class="fc" id="L18">            pstmt.setDouble(2, produit.getPrix());</span>
+            
+<span class="fc" id="L20">            int rowsAffected = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">            if (rowsAffected &gt; 0) {</span>
+<span class="fc" id="L22">                ResultSet rs = pstmt.getGeneratedKeys();</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">                if (rs.next()) {</span>
+<span class="fc" id="L24">                    produit.setId(rs.getInt(1));</span>
+                }
+<span class="fc" id="L26">                return true;</span>
+            }
+<span class="pc bpc" id="L28" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="fc" id="L29">            System.err.println(&quot;Erreur lors de l'ajout d'un produit: &quot; + e.getMessage());</span>
+<span class="nc" id="L30">        }</span>
+<span class="fc" id="L31">        return false;</span>
+    }
+    
+    public Produit trouverParId(int id) {
+<span class="fc" id="L35">        String query = &quot;SELECT * FROM PRODUIT WHERE id_produit = ?&quot;;</span>
+<span class="fc" id="L36">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L37">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L39">            pstmt.setInt(1, id);</span>
+<span class="fc" id="L40">            ResultSet rs = pstmt.executeQuery();</span>
+            
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">            if (rs.next()) {</span>
+<span class="fc" id="L43">                return new Produit(</span>
+<span class="fc" id="L44">                    rs.getInt(&quot;id_produit&quot;),</span>
+<span class="fc" id="L45">                    rs.getString(&quot;nom&quot;),</span>
+<span class="fc" id="L46">                    rs.getDouble(&quot;prix&quot;)</span>
+                );
+            }
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="fc" id="L50">            System.err.println(&quot;Erreur lors de la recherche d'un produit: &quot; + e.getMessage());</span>
+<span class="nc" id="L51">        }</span>
+<span class="fc" id="L52">        return null;</span>
+    }
+    
+    public List&lt;Produit&gt; trouverTous() {
+<span class="fc" id="L56">        List&lt;Produit&gt; produits = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L57">        String query = &quot;SELECT * FROM PRODUIT ORDER BY nom&quot;;</span>
+        
+<span class="fc" id="L59">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L60">             Statement stmt = conn.createStatement();</span>
+<span class="fc" id="L61">             ResultSet rs = stmt.executeQuery(query)) {</span>
+            
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L64">                Produit produit = new Produit(</span>
+<span class="fc" id="L65">                    rs.getInt(&quot;id_produit&quot;),</span>
+<span class="fc" id="L66">                    rs.getString(&quot;nom&quot;),</span>
+<span class="fc" id="L67">                    rs.getDouble(&quot;prix&quot;)</span>
+                );
+<span class="fc" id="L69">                produits.add(produit);</span>
+<span class="fc" id="L70">            }</span>
+<span class="fc" id="L71">        } catch (SQLException e) {</span>
+<span class="fc" id="L72">            System.err.println(&quot;Erreur lors de la récupération des produits: &quot; + e.getMessage());</span>
+<span class="fc" id="L73">        }</span>
+        
+<span class="fc" id="L75">        return produits;</span>
+    }
+    
+    public List&lt;Produit&gt; rechercherParNom(String nom) {
+<span class="fc" id="L79">        List&lt;Produit&gt; produits = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L80">        String query = &quot;SELECT * FROM PRODUIT WHERE nom LIKE ? ORDER BY nom&quot;;</span>
+        
+<span class="fc" id="L82">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L83">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L85">            pstmt.setString(1, &quot;%&quot; + nom + &quot;%&quot;);</span>
+<span class="fc" id="L86">            ResultSet rs = pstmt.executeQuery();</span>
+            
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L89">                Produit produit = new Produit(</span>
+<span class="fc" id="L90">                    rs.getInt(&quot;id_produit&quot;),</span>
+<span class="fc" id="L91">                    rs.getString(&quot;nom&quot;),</span>
+<span class="fc" id="L92">                    rs.getDouble(&quot;prix&quot;)</span>
+                );
+<span class="fc" id="L94">                produits.add(produit);</span>
+<span class="fc" id="L95">            }</span>
+<span class="fc" id="L96">        } catch (SQLException e) {</span>
+<span class="fc" id="L97">            System.err.println(&quot;Erreur lors de la recherche de produits: &quot; + e.getMessage());</span>
+<span class="fc" id="L98">        }</span>
+        
+<span class="fc" id="L100">        return produits;</span>
+    }
+    
+    public boolean modifier(Produit produit) {
+<span class="fc" id="L104">        String query = &quot;UPDATE PRODUIT SET nom = ?, prix = ? WHERE id_produit = ?&quot;;</span>
+        
+<span class="fc" id="L106">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L107">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L109">            pstmt.setString(1, produit.getNom());</span>
+<span class="fc" id="L110">            pstmt.setDouble(2, produit.getPrix());</span>
+<span class="fc" id="L111">            pstmt.setInt(3, produit.getId());</span>
+            
+<span class="fc" id="L113">            int rowsAffected = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">            return rowsAffected &gt; 0;</span>
+<span class="fc" id="L115">        } catch (SQLException e) {</span>
+<span class="fc" id="L116">            System.err.println(&quot;Erreur lors de la modification d'un produit: &quot; + e.getMessage());</span>
+        }
+        
+<span class="fc" id="L119">        return false;</span>
+    }
+    
+    public boolean supprimer(int id) {
+<span class="fc" id="L123">        String query = &quot;DELETE FROM PRODUIT WHERE id_produit = ?&quot;;</span>
+        
+<span class="fc" id="L125">        try (Connection conn = DBConnection.getConnection();</span>
+<span class="fc" id="L126">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+            
+<span class="fc" id="L128">            pstmt.setInt(1, id);</span>
+            
+<span class="fc" id="L130">            int rowsAffected = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            return rowsAffected &gt; 0;</span>
+<span class="fc" id="L132">        } catch (SQLException e) {</span>
+<span class="fc" id="L133">            System.err.println(&quot;Erreur lors de la suppression d'un produit: &quot; + e.getMessage());</span>
+        }
+        
+<span class="fc" id="L136">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
